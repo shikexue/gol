@@ -4,7 +4,7 @@ var Board = function(height, width) {
 	var pad = Pad(document.getElementById('canvas'));
 	pad.clear();
 
-	// define variables which determine the size of the grid.
+	// define the variables which determine the size of the grid.
 	var default_width = 50;
 	var default_height = 50;
 	width = (width) ? width : default_width;
@@ -19,7 +19,18 @@ var Board = function(height, width) {
 			grid[i][j] = [Math.round(Math.random()), -1];
 		}
 	}
-	// first define a helper function to redraw based on the grid
+
+	// draw the grid
+	for (var i = 0; i <= width; i++) {
+		var drawPoint = i/width * pad.get_width();
+		pad.draw_line(Coord(drawPoint, 0), Coord(drawPoint, pad.get_height()), .5, Color(0, 0, 0));
+	};
+	for (i = 0; i <= height; i++) {
+		var drawPoint = i/height * pad.get_height();
+		pad.draw_line(Coord(0, drawPoint), Coord(pad.get_width(), drawPoint), .5, Color(0, 0, 0));
+	};
+
+	// define a helper function to redraw cell squares based on grid
 	var redraw = function() {
 		for (i = 0; i < width; i++) {
 			for (j = 0; j < height; j++) {
@@ -33,27 +44,10 @@ var Board = function(height, width) {
 			}
 		}
 	}
-
-	
-
-	// draw the grid
-	for (var i = 0; i <= width; i++) {
-		var drawPoint = i/width * pad.get_width();
-		pad.draw_line(Coord(drawPoint, 0), Coord(drawPoint, pad.get_height()), .5, Color(0, 0, 0));
-	};
-	for (i = 0; i <= height; i++) {
-		var drawPoint = i/height * pad.get_height();
-		pad.draw_line(Coord(0, drawPoint), Coord(pad.get_width(), drawPoint), .5, Color(0, 0, 0));
-	};
 	
 	redraw();
 
-
-	
-
 	return {
-		runLife: function() {
-		}, 
 		getCurrentState: function(i, j) {
 			return grid[i][j][0];
 		},
