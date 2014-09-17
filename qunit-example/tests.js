@@ -1,4 +1,8 @@
-test("testing toString", function() {
+test("testing board", function(){
+	var myBoard = Board();
+});
+
+/*test("testing toString", function() {
 	var empty = Set();
 	equal(empty.toString(), "{}", "empty set");
 	var s1 = Set().insert(1);
@@ -127,3 +131,4 @@ test("testing that client cannot modify methods", function() {
 	empty.clear = undefined;
 	equal(empty.clear, clear, "attempted modification of clear");
 });
+*/
