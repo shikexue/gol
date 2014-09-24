@@ -1,99 +1,141 @@
+// a cell object
+var Cell = function(x, y, random) {
+	// we use false to indicate dead whereas true indicates alive.
+	if (random) {
+		var state = Math.random() > .5;
+		var nextState = state;
+	} else {
+		state = false;
+		nextState = false;
+	}
+	var div = document.createElement("td");
 
-var Board = function(height, width) {
-	// create the pad object for drawing to
-	var pad = Pad(document.getElementById('canvas'));
-	pad.clear();
-
-	// define the variables which determine the size of the grid.
-	var default_width = 50;
-	var default_height = 50;
-	width = (width) ? width : default_width;
-	height = (height) ? height : default_height;
-
-	// begin by instantiating our grid with values,with a random initial configuration
-	// our grid starts with 0, 0 in the top left corner and contains the state of the square
-	var grid = [];
-	for (var i = 0; i < width; i++) {
-		grid[i] = [];
-		for (var j = 0; j < height; j++) {
-			grid[i][j] = [Math.round(Math.random()), -1];
-		}
+	div.onclick = function() {
+		state = !state;
+		output.redraw();
 	}
 
-	// draw the grid
-	for (var i = 0; i <= width; i++) {
-		var drawPoint = i/width * pad.get_width();
-		pad.draw_line(Coord(drawPoint, 0), Coord(drawPoint, pad.get_height()), .5, Color(0, 0, 0));
-	};
-	for (i = 0; i <= height; i++) {
-		var drawPoint = i/height * pad.get_height();
-		pad.draw_line(Coord(0, drawPoint), Coord(pad.get_width(), drawPoint), .5, Color(0, 0, 0));
-	};
-
-	// define a helper function to redraw cell squares based on grid
-	var redraw = function() {
-		for (i = 0; i < width; i++) {
-			for (j = 0; j < height; j++) {
-				if (grid[i][j][0] === 1) {
-					var fillColor = Color(100, 0, 0);
-				} else {
-					fillColor = Color(256, 256, 256);
-				}
-				pad.draw_rectangle(Coord(i * pad.get_width()/width, j * pad.get_height()/height), 
-						pad.get_width()/width, pad.get_height()/height, .5, Color(0, 0, 0), fillColor);
-			}
-		}
-	}
-	
-	redraw();
-
-	return {
-		getCurrentState: function(i, j) {
-			return grid[i][j][0];
+	var output = {
+		get_x : function() {
+			return x;
 		},
-		step: function() {
-			for (i = 0; i < width; i++) {
-				for (j = 0; j < height; j++) {
-					var count = 0;
-					for (var adjWidth = -1; adjWidth <= 1; adjWidth++) {
-						for (var adjHeight = -1; adjHeight <= 1; adjHeight++) {
-							if (adjWidth != 0 || adjHeight != 0 ) {
-								var newI = i + adjWidth;
-								var newJ = j + adjHeight;
-								if (newI >= 0 && newI < width && newJ >= 0 && newJ < height){
-									count += grid[newI][newJ][0];
-								}
-							}
-						}
-					}
-					if (grid[i][j][0] == 0) {
-						if (count == 3) {
-							grid[i][j][1] = 1;
-						}
-					} else {
-						if (count < 2 || count > 3) {
-							grid[i][j][1] = 0;
-						} else {
-							grid[i][j][1] = 1;
-						}
-					}
-				}
+		get_y : function() {
+			return y;
+		}, 
+		get_state : function() {
+			return state;
+		},
+		set_next : function(next) {
+			nextState = next;
+		},
+		get_next : function() {
+			return nextState;
+		},
+		update : function() {
+			state = nextState;
+			output.redraw();
+		},
+		redraw : function() {
+			if (state) {
+				div.style.backgroundColor = 'black';
+			} else {
+				div.style.backgroundColor = 'white';
 			}
-
-			for (i = 0; i < width; i++) {
-				for (j = 0; j < width; j++) {
-					grid[i][j][0] = grid[i][j][1];
-				}
-			}
-
-			redraw();
+		},
+		get_div : function() {
+			return div;
 		}
 	}
+	output.redraw();
+	return output;
 }
 
-var myBoard = Board(75, 75);
-var iterate = function() {
-	setTimeout(myBoard.step, 500);
-	iterate();
+// the board object representing the array of cells and contains 
+// functions that affect the overall board state.
+var Board = function(width, height, containerID, random) {
+	// begin by instantiating array which will hold the cells
+	var cells = [];
+	var container = document.getElementById(containerID);
+
+	function initialize() {
+		for (var i = 0; i < height; i += 1) {
+			cells[i] = [];
+			for (var j = 0; j < width; j += 1) {
+				// we must call Cell(j, i) because we iterate through
+				// height using i and width using j.
+				cells[i][j] = Cell(j, i, random);
+			}
+		}
+	}
+	initialize()
+
+	var output = {
+		alive_neighbors : function(x, y) {
+			var count = 0;
+			// iterate 
+			for (var i = -1; i <= 1; i += 1) {
+				var adjX = x + i;
+				if (adjX >= 0 && adjX < width) {
+					for (var j = -1; j <= 1; j += 1) {
+						var adjY = y + j;
+						if (!(i == 0 && j == 0) && adjY >= 0 && adjY < height && 
+							cells[adjX][adjY].get_state()) {
+								count += 1;
+						}
+					}
+				}
+			}
+			return count;
+		},
+		step : function() {
+			var update = [];
+			for (var i = 0; i < width; i += 1) {
+				for (var j = 0; j < height; j += 1) {
+					var current_cell = cells[i][j];
+					var count = output.alive_neighbors(i, j);
+					//cells become alive if they were dead and had 3 neighbors
+					//or alive and had 2 or 3 neighbors
+					if (count == 3 || (count == 2 && current_cell.get_state())) {
+						current_cell.set_next(true);
+					} else {
+						current_cell.set_next(false);
+					}
+					if (current_cell.get_state() != current_cell.get_next()) {
+						update[update.length] = current_cell;
+					}
+				}
+			}
+			for (i = 0; i < update.length; i += 1) {
+				update[i].update();
+			}
+		},
+		draw : function() {
+			var current_board = document.getElementById("board");
+			var dom_board = document.createElement("table");
+			dom_board.border = "1";
+			dom_board.id = "board";
+			dom_board.setAttribute("cellspacing", "0");
+			if (current_board != null) {
+				container.replaceChild(dom_board, current_board);
+			} else {
+				container.appendChild(dom_board);
+			}
+			container.appendChild(dom_board);
+
+			for (var i = 0; i < height; i += 1) {
+				var row = document.createElement("tr");
+				dom_board.appendChild(row);
+
+				for (var j = 0; j < width; j += 1) {
+					row.appendChild(cells[i][j].get_div());
+				}
+			}
+		}
+	}
+	return output;
 }
-iterate();
+
+
+
+b = Board(20, 20, "output");
+b.draw();

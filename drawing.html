@@ -4,17 +4,21 @@
     <script src="graphics.js"></script>
     <style>
         #canvas_container {position: absolute; left: 100px; top: 100px; width: 400px; height: 400px;}
+        td {border: 1px solid black; width: 10px; height: 10px; padding: 2px;}
     </style>
 </head>
 
 <body>
+<top>Conway's Game of Life</top> <br>
+<controls><button type="button">Start</button><button type="button">Stop</button><button type="button" onclick="(function() {a = Board(20,20,'output',true); a.draw();})();">Random</button></controls>
+<output id="output"></output>
 
 <!--
 define the HTML canvas element that will hold the graphical output
 -->
-<div id="canvas_container">
+<!--<div id="canvas_container">
     <canvas id="canvas"></canvas>
-</div>
+</div>-->
 
 <!--
 execute the JavaScript

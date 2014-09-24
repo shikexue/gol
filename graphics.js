@@ -1,5 +1,9 @@
 // a very simple graphics library using HTML5 canvas features
 
+var Board = function (tableID) {
+	
+}
+
 // constructor for 2D coordinate
 var Coord = function (x, y) {
 	return {x:x, y:y};
