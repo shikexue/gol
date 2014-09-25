@@ -3,33 +3,39 @@ proj1
 Game of Life
 
 Grading Directions:
-  Highlights: There's nothing particularly spectacular that I feel the need 
-    to point out. Every part kind of just does what it needs to in order to 
-    function; the grid simply repaints itself every tick, and searches through 
-    the grid to find what's changed.
-  Help wanted: I'm fairly unsure of how to use qunit, because I don't 
-    understand how to include test cases that rely on specific javascript files
-    without calling the entirety of the javascript file in order to access the functions.
+  Directions: View the project by opening drawing.html in a web browser.
+    Click on a cell to change its state from dead to alive or from alive to dead.
+    To modify the height or width settings, change the numbers and then click Empty Board or
+    Random Board to create a new board with the appropriate dimensions which are either all dead
+    to begin with or with randomly generated cell states. The rules for cell life and death
+    can be modified by using the drop down menus to add or remove new counts to the appropriate 
+    lists of counts.
+  Highlights: The additional features that are implemented are the ability to modify 
+    original rules for the Game of Life such that different counts of alive neighbors
+    can also yield new cells being born or also result in existing cells continuing to
+    exist instead of dying out. Additionally, this version supports boards of varying 
+    sizes, although because there is no really good way to change the sizes of the cells,
+    very large boards aren't really recommended.
+  Help wanted: I'm unsure of how to actually include test cases for the HTML other than just
+    manually testing by viewing the resulting web page. Additionally, I don't have very much
+    experience with CSS yet, so making a web page that is more aesthetically pleasing is 
+    more difficult. There is probably also a better way to transform the size of the table
+    other than simply rebuilding the HTML and replacing the old table, but this seemed like
+    the easiest, albeit not most efficient method.
 Programming:
-  Basic Coding: I feel like the code is pretty straightforward and confirmed to
-    most programming conventions. I had to iterate through the grid fairly frequently
-    which meant a disapointing number of times that a double for-loop had to be called.
-    If javascript performs similarly to the way ActionScript does, then it's probable that
-    there will be a performance increase if I store each cell's neighbors in an array instead
-    of calling the grid.
-  Modularity: It's disappointingly not quite as extendable to the DOM version for phase 2, but
-    it supports different sizes of width and height pretty well. 
-  Verifications: I couldn't quite figure out how to get qunit working, but all of the checks on
-    performance behavior appears to be correct.
+  Basic Coding: Again, I've coded in order to conform to programming conventions whenever
+    possible. The data structures designed in javascript do not call "this". I'm not sure
+    whether there are other conventions for using HTML IDs, but I've tried to use appropriately
+    named ones whereever possible. 
+  Modularity: The code is perhaps lacking in modularity in that it is all confined to a single
+    file, but there is a single primary data structure, which is the Board. Because the Board 
+    meaningfully handles everything related to actually running the Game of Life, it didn't
+    seem unreasonable to represent it this way.
 Design:
-  Challenges: The main design challenge was to design some sort of data structure as 
-    well as implement a class to represent the grid for Life. A matrix of values, with
-    0 representing dead cells and 1 representing alive cells was used. Additionally,
-    the values are all represented by an array containing the current state as well as
-    the calculated next state. This is because we can't mutate the current state while we're
-    calculating which cells should live or die. Although the most correct design is probably
-    making Board a completely immutable class, ease of programming outweighed the design choice here.
-
-How to view the App:
-  Open drawing.html in a browser. It randomly generates a new board every time the page is
-  loaded, with each cell having a 50% probability of being alive. 
+  Challenges: The main design concern was finding an appropriate data structure to handle the 
+    running of the board as well as the display of the board. Using a table of cells that are 
+    identically sized seemed like a reasonable representation, especially since table elements
+    can have their background color be changed in order to represent cells that are alive or dead.
+    The data structure of the Game in javascript is handled using two classes: a Board which 
+    contains a matrix of Cells. The Board handles building the HTML representation of a Table, 
+    using Cells to maintain the background color of its own corresponding cell in HTML as a <td>.

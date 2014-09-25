@@ -1,24 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="graphics.js"></script>
     <style>
-        #canvas_container {position: absolute; left: 100px; top: 100px; width: 400px; height: 400px;}
-        td {border: 1px solid black; width: 10px; height: 10px; padding: 2px;}
+        td {border: 2px solid black; width: 7px; height: 7px; padding: 3px;}
+        #top {width:100%; background-color: #d3d3d3; text-align: center; font-size: 200%}
+        #settings {text-align: center;}
+        #output {margin: 0 auto;}
     </style>
 </head>
 
 <body>
-<top>Conway's Game of Life</top> <br>
-<controls><button type="button">Start</button><button type="button">Stop</button><button type="button" onclick="(function() {a = Board(20,20,'output',true); a.draw();})();">Random</button></controls>
-<output id="output"></output>
-
-<!--
-define the HTML canvas element that will hold the graphical output
--->
-<!--<div id="canvas_container">
-    <canvas id="canvas"></canvas>
-</div>-->
+<div id="top">Conway's Game of Life</div>
+<div id="settings">
+<sizes>Settings: width <input type="text" size="4" value="50" id="width"></input> height <input type="text" size="2" value="50" id="height"></input><button type = "button" onclick="lifeBoard = newBoard()">Empty Board</button><button type="button" onclick="lifeBoard = newBoard(true)">Random Board</button></sizes><br>
+<rules>Number of alive neighbors which result in... birth: <birth id="birth">3</birth> and staying alive: <alive id="alive">2, 3</alive></rules><br>
+<variants>Modify Life Rules for this board: 
+	<select id="edit">
+		<option value="add">add to list</option>
+		<option value="remove">remove from list</option>
+	</select>
+	<select id="rule">
+		<option value="birth">number for birthing cells</option>
+		<option value="alive">number for cells to stay alive</option>
+	</select>
+	<select id="newNumber">
+		<option value="0">0</option>
+		<option value="1">1</option>
+		<option value="2">2</option>
+		<option value="3">3</option>
+		<option value="4">4</option>
+		<option value="5">5</option>
+		<option value="6">6</option>
+		<option value="7">7</option>
+		<option value="8">8</option>
+	</select>
+	<button onclick="lifeBoard.ruleEdit()">Apply</button>
+ </variants><br>
+<controls><button type="button" onclick="lifeBoard.start()">Start</button><button type="button" onclick="lifeBoard.stop()">Stop</button></controls></div>
+<div id="output"></div>
 
 <!--
 execute the JavaScript
